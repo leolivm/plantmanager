@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "plantmanager",
+    "slug": "plantmanager",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
