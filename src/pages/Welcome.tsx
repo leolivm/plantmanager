@@ -12,8 +12,9 @@ import { Feather } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 
 import colors from '../../styles/colors'
-import watering from '../assets/watering.png'
 import fonts from '../../styles/fonts'
+
+import watering from '../assets/watering.png'
 
 const Welcome: React.FC = () => {
   const { navigate } = useNavigation()
