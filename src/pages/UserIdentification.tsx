@@ -7,8 +7,10 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import { Button } from '../components/Button'
 
@@ -34,7 +36,11 @@ const UserIdentification: React.FC = () => {
     setName(value)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!name) return Alert.alert('Me diz como chamar você 😢')
+
+    await AsyncStorage.setItem('@PlantManager:User', name)
+
     navigate('Confirmation')
   }
 

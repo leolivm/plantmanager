@@ -1,21 +1,36 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text, Image } from 'react-native'
 import { getStatusBarHeight } from 'react-native-iphone-x-helper'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import leolivm from '../../assets/leolivm.png'
 import colors from '../../styles/colors'
 import fonts from '../../styles/fonts'
 
-const Header: React.FC = () => (
-  <View style={styles.container}>
-    <View>
-      <Text style={styles.greeting}>Olá,</Text>
-      <Text style={styles.userName}>Leandro</Text>
-    </View>
+const Header: React.FC = () => {
+  const [name, setName] = useState<string>()
 
-    <Image source={leolivm} style={styles.image} />
-  </View>
-)
+  const handleUserName = async () => {
+    const userName = await AsyncStorage.getItem('@PlantManager:User')
+
+    setName(userName)
+  }
+
+  useEffect(() => {
+    handleUserName()
+  }, [name])
+
+  return (
+    <View style={styles.container}>
+      <View>
+        <Text style={styles.greeting}>Olá,</Text>
+        <Text style={styles.userName}>{name}</Text>
+      </View>
+
+      <Image source={leolivm} style={styles.image} />
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
