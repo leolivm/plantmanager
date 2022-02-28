@@ -13,12 +13,12 @@ const Header: React.FC = () => {
   const handleUserName = async () => {
     const userName = await AsyncStorage.getItem('@PlantManager:User')
 
-    setName(userName)
+    setName(userName || '')
   }
 
   useEffect(() => {
     handleUserName()
-  }, [name])
+  }, [])
 
   return (
     <View style={styles.container}>

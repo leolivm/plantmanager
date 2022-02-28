@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Alert,
   StyleSheet,
@@ -15,6 +15,15 @@ import { useRoute } from '@react-navigation/native'
 import DateTimePicker, { Event } from '@react-native-community/datetimepicker'
 import { format, isBefore } from 'date-fns'
 import { useNavigation } from '@react-navigation/native'
+import { SharedElement } from 'react-navigation-shared-element'
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated'
 
 import { PlantProps, savePlant } from '../libs/storage'
 
@@ -32,6 +41,28 @@ const PlantSave: React.FC = () => {
   const route = useRoute()
   const { plant } = route.params as Params
   const { navigate } = useNavigation()
+
+  const titlePosition = useSharedValue(-200)
+
+  const buttonPosition = useSharedValue(100)
+  const buttonStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: buttonPosition.value }],
+      opacity: interpolate(
+        buttonPosition.value,
+        [100, 0], // numero minimo e maxi da animacao
+        [0, 1], // opacidade respectiva na posicao
+        Extrapolate.CLAMP, // limita a opacidade de 0 ate 1
+      ),
+    }
+  })
+
+  const titleStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: titlePosition.value }],
+      opacity: interpolate(titlePosition.value, [-200, 0], [0, 1]),
+    }
+  })
 
   const [selectedDateTime, setSelectedDateTime] = useState(new Date())
   const [showDatePicker, setShowDatePicker] = useState(Platform.OS === 'ios')
@@ -73,16 +104,34 @@ const PlantSave: React.FC = () => {
     }
   }
 
+  useEffect(() => {
+    buttonPosition.value = withTiming(0, {
+      duration: 700,
+      //para gerar cubic-bezier https://cubic-bezier.com/#.15,.75,.93,.54
+      easing: Easing.bounce,
+    })
+
+    titlePosition.value = withTiming(0, {
+      duration: 700,
+      //para gerar cubic-bezier https://cubic-bezier.com/#.15,.75,.93,.54
+      easing: Easing.bounce,
+    })
+  }, [])
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.container}
+      contentContainerStyle={styles.scrollListContainer}
     >
       <View style={styles.container}>
         <View style={styles.plantInfo}>
-          <SvgFromUri uri={plant.photo} height={150} width={150} />
+          <SharedElement id={`item.${plant.id}.image`}>
+            <SvgFromUri uri={plant.photo} height={150} width={150} />
+          </SharedElement>
 
-          <Text style={styles.plantName}>{plant.name}</Text>
+          <Animated.Text style={[styles.plantName, titleStyle]}>
+            {plant.name}
+          </Animated.Text>
 
           <Text style={styles.plantAbout}>{plant.about}</Text>
         </View>
@@ -90,12 +139,11 @@ const PlantSave: React.FC = () => {
         <View style={styles.controller}>
           <View style={styles.tipContainer}>
             <Image source={waterDrop} style={styles.tipImage} />
-
             <Text style={styles.tipText}>{plant.water_tips}</Text>
           </View>
 
           <Text style={styles.alertLabel}>
-            Escolha o melhor horário para ser lembrado
+            Escolha o melhor horário para ser lembrado:
           </Text>
 
           {showDatePicker && (
@@ -109,17 +157,18 @@ const PlantSave: React.FC = () => {
 
           {Platform.OS === 'android' && (
             <TouchableOpacity
-              onPress={handleOpenDateTimePickerForAndroid}
               style={styles.dateTimePickerButton}
+              onPress={handleOpenDateTimePickerForAndroid}
             >
-              <Text style={styles.dateTimePickerText}>{`Mudar ${format(
-                selectedDateTime,
-                'HH:mm',
-              )}`}</Text>
+              <Text style={styles.dateTimePickerText}>
+                {`Mudar ${format(selectedDateTime, 'HH:mm')}`}
+              </Text>
             </TouchableOpacity>
           )}
 
-          <Button title="Cadastrar Planta" onPress={handleSave} />
+          <Animated.View style={buttonStyle}>
+            <Button title="Cadastrar planta" onPress={handleSave} />
+          </Animated.View>
         </View>
       </View>
     </ScrollView>
@@ -129,6 +178,11 @@ const PlantSave: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'space-between',
+    backgroundColor: colors.shape,
+  },
+  scrollListContainer: {
+    flexGrow: 1,
     justifyContent: 'space-between',
     backgroundColor: colors.shape,
   },
@@ -147,9 +201,8 @@ const styles = StyleSheet.create({
     paddingBottom: getBottomSpace() || 20,
   },
   plantName: {
-    textAlign: 'center',
     fontFamily: fonts.heading,
-    fontSize: 14,
+    fontSize: 24,
     color: colors.heading,
     marginTop: 15,
   },

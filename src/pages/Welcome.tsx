@@ -42,9 +42,7 @@ const Welcome: React.FC = () => {
           activeOpacity={0.7}
           onPress={handleStart}
         >
-          <Text style={styles.buttonText}>
-            <Feather name="chevron-right" style={styles.buttonIcon} />
-          </Text>
+          <Feather name="chevron-right" style={styles.buttonIcon} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -62,8 +60,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 28,
     textAlign: 'center',
     color: colors.heading,
     marginTop: 38,
@@ -77,6 +74,9 @@ const styles = StyleSheet.create({
     color: colors.heading,
     fontFamily: fonts.text,
   },
+  image: {
+    height: Dimensions.get('window').width * 0.7,
+  },
   button: {
     backgroundColor: colors.green,
     justifyContent: 'center',
@@ -86,15 +86,8 @@ const styles = StyleSheet.create({
     height: 56,
     width: 56,
   },
-  buttonText: {
-    color: colors.white,
-    fontSize: 24,
-  },
-  image: {
-    height: Dimensions.get('window').width * 0.7,
-  },
   buttonIcon: {
-    fontSize: 24,
+    fontSize: 32,
     color: colors.white,
   },
 })

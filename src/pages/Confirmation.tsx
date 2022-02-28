@@ -6,14 +6,13 @@ import { Button } from '../components/Button'
 
 import colors from '../../styles/colors'
 import fonts from '../../styles/fonts'
-import { RootStackParamList } from '../routes/stack.routes'
 
 export interface ConfirmationParams {
   title: string
   subtitle: string
   buttonTitle: string
   icon: 'smile' | 'hug'
-  nextScreen: keyof RootStackParamList
+  nextScreen: any
 }
 
 const emojis = {
@@ -41,11 +40,9 @@ const Confirmation: React.FC = () => {
         <Text style={styles.subtitle}>{subtitle}</Text>
 
         <View style={styles.footer}>
-          <Button title="Começar" onPress={handleMoveOn} />
+          <Button title={buttonTitle} onPress={handleMoveOn} />
         </View>
       </View>
-
-      <View style={styles.footer}></View>
     </SafeAreaView>
   )
 }
